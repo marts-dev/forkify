@@ -41,56 +41,78 @@ export default class Recipe {
       "teaspoon",
       "cups",
       "pounds",
+      "pound",
+      "kilograms",
+      "gram",
     ];
-    const unitsShort = ["tbsp", "tbsp", "oz", "oz", "tsp", "tsp", "cup", "lb"];
-    const newIngredients = this.ingredients.map((el) => {
-      //Uniform units
-      let ingredient = el.toLowerCase();
-      unitsLong.forEach((elem, it) => {
-        ingredient = ingredient.replace(elem, unitsShort[it]);
-      });
+    const unitsShort = [
+      "tbsp",
+      "tbsp",
+      "oz",
+      "oz",
+      "tsp",
+      "tsp",
+      "cup",
+      "lbs",
+      "lb",
+      "kg",
+      "g",
+    ];
+    const newIngredients = this.ingredients
+      .filter((el) => {
+        let ingredient = el.toLowerCase().trim();
 
-      //Remove parenthesis
-      ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+        //Remove parenthesis
+        ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+        return ingredient !== " ";
+      })
+      .map((el) => {
+        //Uniform units
+        let ingredient = el;
+        unitsLong.forEach((elem, it) => {
+          ingredient = ingredient.replace(elem, unitsShort[it]);
+        });
 
-      //Parse ingredients into count, unit and ingrdient
-      const arrIng = ingredient.split(" ");
-      const unitIndex = arrIng.findIndex((el2) => unitsShort.includes(el2));
+        //Remove parenthesis
+        ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+        //Parse ingredients into count, unit and ingrdient
+        const arrIng = ingredient.split(" ");
+        const unitIndex = arrIng.findIndex((el2) => unitsShort.includes(el2));
 
-      let objIng;
-      if (unitIndex > -1) {
-        //There is a unit
-        const arrCount = arrIng.slice(0, unitIndex);
-        let count;
-        if (arrCount.length === 1) {
-          //Only single count
-          count = eval(arrCount[0].replace("-", "+"));
-        } else {
-          //Has fraction
-          count = eval(arrCount.join("+"));
+        let objIng;
+        if (unitIndex > -1) {
+          //There is a unit
+          const arrCount = arrIng.slice(0, unitIndex);
+          let count;
+          if (arrCount.length === 1) {
+            //Only single count
+            count = eval(arrCount[0].replace("-", "+"));
+          } else {
+            //Has fraction
+            count = eval(arrCount.join("+"));
+          }
+          objIng = {
+            count,
+            unit: arrIng[unitIndex],
+            ingredient: arrIng.slice(unitIndex + 1).join(" "),
+          };
+        } else if (parseInt(arrIng[0], 10)) {
+          //There is no unit but there is number
+          objIng = {
+            count: parseInt(arrIng[0], 10),
+            unit: "",
+            ingredient: arrIng.slice(1).join(" "),
+          };
+        } else if (unitIndex === -1) {
+          //There is no unit and number
+          objIng = {
+            count: 1,
+            unit: "",
+            ingredient,
+          };
         }
-        objIng = {
-          count,
-          unit: "",
-          ingredient: arrIng.slice(arrCount.length).join(" "),
-        };
-      } else if (parseInt(arrIng[0], 10)) {
-        //There is no unit but there is number
-        objIng = {
-          count: parseInt(arrIng[0], 10),
-          unit: "",
-          ingredient: arrIng.slice(1).join(" "),
-        };
-      } else if (unitIndex === -1) {
-        //There is no unit and number
-        objIng = {
-          count: 1,
-          unit: "",
-          ingredient,
-        };
-      }
-      return objIng;
-    });
+        return objIng;
+      });
     this.ingredients = newIngredients;
   }
 }
