@@ -12,8 +12,8 @@ const state = {};
 
 const controlSearch = async () => {
   //1 Get query from view
-  const query = searchView.getInput(); //TODO
-  console.log(query);
+  const query = searchView.getInput();
+
   if (query) {
     //2 New Search object and add to state
     state.search = new Search(query);
@@ -31,7 +31,7 @@ const controlSearch = async () => {
       searchView.renderOutput(state.search.recipes);
     } catch (error) {
       clearLoader();
-      alert(`Error processing your request: ${error}`);
+      alert(`Error processing your search: ${error}`);
     }
   }
 };
@@ -64,12 +64,14 @@ const controlRecipe = async () => {
     try {
       //Get recipe data
       await state.recipe.getRecipe();
+      console.log(state.recipe.ingredients);
       //Calculate serving and time
       state.recipe.calcTime();
       state.recipe.calcServings();
-
+      state.recipe.parseIngredients();
+      console.log(state.recipe.ingredients);
       //Render Recipe
-      console.log(state.recipe);
+      //console.log(state.recipe);
     } catch (error) {
       alert(`Error processing your request: ${error}`);
     }

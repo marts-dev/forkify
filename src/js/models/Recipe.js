@@ -30,4 +30,67 @@ export default class Recipe {
   calcServings() {
     this.servings = 4;
   }
+
+  parseIngredients() {
+    const unitsLong = [
+      "tablespoons",
+      "tablespoon",
+      "ounces",
+      "ounce",
+      "teaspoons",
+      "teaspoon",
+      "cups",
+      "pounds",
+    ];
+    const unitsShort = ["tbsp", "tbsp", "oz", "oz", "tsp", "tsp", "cup", "lb"];
+    const newIngredients = this.ingredients.map((el) => {
+      //Uniform units
+      let ingredient = el.toLowerCase();
+      unitsLong.forEach((elem, it) => {
+        ingredient = ingredient.replace(elem, unitsShort[it]);
+      });
+
+      //Remove parenthesis
+      ingredient = ingredient.replace(/ *\([^)]*\) */g, " ");
+
+      //Parse ingredients into count, unit and ingrdient
+      const arrIng = ingredient.split(" ");
+      const unitIndex = arrIng.findIndex((el2) => unitsShort.includes(el2));
+
+      let objIng;
+      if (unitIndex > -1) {
+        //There is a unit
+        const arrCount = arrIng.slice(0, unitIndex);
+        let count;
+        if (arrCount.length === 1) {
+          //Only single count
+          count = eval(arrCount[0].replace("-", "+"));
+        } else {
+          //Has fraction
+          count = eval(arrCount.join("+"));
+        }
+        objIng = {
+          count,
+          unit: "",
+          ingredient: arrIng.slice(arrCount.length).join(" "),
+        };
+      } else if (parseInt(arrIng[0], 10)) {
+        //There is no unit but there is number
+        objIng = {
+          count: parseInt(arrIng[0], 10),
+          unit: "",
+          ingredient: arrIng.slice(1).join(" "),
+        };
+      } else if (unitIndex === -1) {
+        //There is no unit and number
+        objIng = {
+          count: 1,
+          unit: "",
+          ingredient,
+        };
+      }
+      return objIng;
+    });
+    this.ingredients = newIngredients;
+  }
 }
