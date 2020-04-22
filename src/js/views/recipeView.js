@@ -86,12 +86,12 @@ const renderRecipeDetail = (time, servings) => {
             <span class="recipe__info-text"> servings</span>
 
             <div class="recipe__info-buttons">
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-decrease">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-minus"></use>
                     </svg>
                 </button>
-                <button class="btn-tiny">
+                <button class="btn-tiny btn-increase">
                     <svg>
                         <use href="img/icons.svg#icon-circle-with-plus"></use>
                     </svg>
@@ -117,4 +117,15 @@ export const renderRecipePage = (recipe) => {
   //Render the ingredients
   renderRecipeIngredients(recipe.ingredients);
   //Render directions
+};
+
+export const updateServingIngredients = (recipe) => {
+  //Update servings
+  document.querySelector(".recipe__info-data--people").textContent =
+    recipe.servings;
+  //Update ingredient
+  const countElements = Array.from(document.querySelectorAll(".recipe__count"));
+  countElements.forEach((el, it) => {
+    el.textContent = formatCount(recipe.ingredients[it].count);
+  });
 };
