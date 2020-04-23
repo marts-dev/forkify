@@ -6,6 +6,8 @@ export const elements = {
   searchResultPages: document.querySelector(".results__pages"),
   recipeDiv: document.querySelector(".recipe"),
   shoppingList: document.querySelector(".shopping__list"),
+  likesMenu: document.querySelector(".likes__field"),
+  likesList: document.querySelector(".likes__list"),
 };
 
 const elementStrings = {
@@ -27,4 +29,18 @@ export const renderLoader = (parent) => {
 export const clearLoader = () => {
   const loader = document.querySelector(`.${elementStrings.loader}`);
   if (loader) loader.parentElement.removeChild(loader);
+};
+
+export const limitRecipeTitle = (title, limit = 17) => {
+  const newTitle = [];
+  if (title.length > limit) {
+    title.split(" ").reduce((acc, cur) => {
+      if (acc + cur.length <= limit) {
+        newTitle.push(cur);
+      }
+      return acc + cur.length;
+    }, 0);
+    return `${newTitle.join(" ")}...`;
+  }
+  return title;
 };

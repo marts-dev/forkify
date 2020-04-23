@@ -88,7 +88,7 @@ const renderRecipeImage = (title, image_url) => {
   elements.recipeDiv.insertAdjacentHTML("beforeend", figure);
 };
 
-const renderRecipeDetail = (time, servings) => {
+const renderRecipeDetail = (time, servings, isLiked) => {
   const details = `
     <div class="recipe__details">
         <div class="recipe__info">
@@ -121,7 +121,9 @@ const renderRecipeDetail = (time, servings) => {
         </div>
         <button class="recipe__love">
             <svg class="header__likes">
-                <use href="img/icons.svg#icon-heart-outlined"></use>
+                <use href="img/icons.svg#icon-heart${
+                  isLiked ? "" : "-outlined"
+                }"></use>
             </svg>
         </button>
     </div>
@@ -129,11 +131,11 @@ const renderRecipeDetail = (time, servings) => {
   elements.recipeDiv.insertAdjacentHTML("beforeend", details);
 };
 
-export const renderRecipePage = (recipe) => {
+export const renderRecipePage = (recipe, isLiked) => {
   //Render the image of recipe
   renderRecipeImage(recipe.title, recipe.image_url);
   //Render the details(Prep time, serving and buttons)
-  renderRecipeDetail(recipe.time, recipe.servings);
+  renderRecipeDetail(recipe.time, recipe.servings, isLiked);
   //Render the ingredients
   renderRecipeIngredients(recipe.ingredients);
   //Render directions

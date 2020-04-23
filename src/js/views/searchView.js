@@ -1,4 +1,4 @@
-import { elements } from "./base";
+import { elements, limitRecipeTitle } from "./base";
 
 export const getInput = () => elements.searchInput.value; //has implicit return
 
@@ -17,22 +17,8 @@ export const highlightSelected = (id) => {
     el.classList.remove("results__link--active");
   });
   document
-    .querySelector(`a[href="#${id}"]`)
+    .querySelector(`.results__link[href="#${id}"]`)
     .classList.add("results__link--active");
-};
-
-const limitRecipeTitle = (title, limit = 17) => {
-  const newTitle = [];
-  if (title.length > limit) {
-    title.split(" ").reduce((acc, cur) => {
-      if (acc + cur.length <= limit) {
-        newTitle.push(cur);
-      }
-      return acc + cur.length;
-    }, 0);
-    return `${newTitle.join(" ")}...`;
-  }
-  return title;
 };
 
 const renderRecipe = (recipe) => {
