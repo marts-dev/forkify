@@ -33,7 +33,6 @@ const controlSearch = async () => {
 
       //5 Render results to UI
       clearLoader();
-      console.log(state.search.recipes);
       searchView.renderOutput(state.search.recipes);
     } catch (error) {
       clearLoader();
@@ -54,14 +53,12 @@ elements.searchResultPages.addEventListener("click", (e) => {
     const goToPage = parseInt(button.dataset.goto, 10);
     searchView.clearResults();
     searchView.renderOutput(state.search.recipes, goToPage);
-    console.log(goToPage);
   }
 });
 
 //Recipe Controller
 const controlRecipe = async () => {
   const id = window.location.hash.replace("#", "");
-  console.log(id);
   if (id) {
     //Prepare UI
     recipeView.clearResults();
@@ -125,9 +122,6 @@ elements.shoppingList.addEventListener("click", (e) => {
 });
 
 //Like controller
-//Temp Test
-state.likes = new Likes();
-likesView.toggleLikemenu(state.likes.getNumLikes());
 const controlLikes = () => {
   if (!state.likes) state.likes = new Likes();
   const currentId = state.recipe.id;
@@ -143,18 +137,31 @@ const controlLikes = () => {
     );
     //Toggle like button
     likesView.toggleLikeBtn(true);
-    console.log(state.likes);
     //Add like to UI list
     likesView.renderLikesList(newLike);
   } else {
     //liked
     state.likes.deleteLike(currentId);
     likesView.toggleLikeBtn(false);
-    console.log(state.likes);
     likesView.deleteLike(currentId);
   }
   likesView.toggleLikemenu(state.likes.getNumLikes());
 };
+
+//Restore liked recipes on page reload
+window.addEventListener("load", () => {
+  state.likes = new Likes();
+  //Restore likes
+  state.likes.readStorage();
+
+  //Toggle button
+  likesView.toggleLikemenu(state.likes.getNumLikes());
+
+  //Render list items
+  state.likes.likes.forEach((el) => {
+    likesView.renderLikesList(el);
+  });
+});
 
 //Handling recipe button click(not yet initially rendered)
 elements.recipeDiv.addEventListener("click", (e) => {
@@ -174,5 +181,3 @@ elements.recipeDiv.addEventListener("click", (e) => {
     controlLikes();
   }
 });
-
-window.l = new List();
